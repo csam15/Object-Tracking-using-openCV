@@ -4,32 +4,29 @@ import time
 
 serial_arduino = None
 
-secs = .25
+secs = .25 # adjust the delay between camera adjustments
 
 cap = cv2.VideoCapture(1)
 
+# establish connection with your arduino board
 def estConn():
     serial_arduino = serial.Serial('COM3', 9600, timeout=2)
     time.sleep(3)
     serial_arduino.write('i'.encode())
     serial_arduino.readline().decode('utf-8')
     tmp = serial_arduino.readline().decode('utf-8')
-    print(serial_arduino)
-    print(tmp)
-    if tmp == 'hello\r\n':
+    if tmp == 'hello\r\n': # if arduino send "hello" back the connection is successful
         print('Arduino is all set')
     return serial_arduino 
   
-#serial_arduino = estConn()
+serial_arduino = estConn()
 
 def sendData(byte):   
     serial_arduino.write(byte.encode())
     y = serial_arduino.readline().decode('utf-8')
-    print(y) 
-    print("titties")                  
-    
+    print(y)             
         
-while True:
+def main_loop():
     ret, frame = cap.read()
     
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -49,8 +46,7 @@ while True:
             cv2.rectangle(frame, cX, cY, (255, 0, 0), 2)
             cv2.circle(frame, (cX,cY), 5, (255,0,0), 2)
             
-            print(cenD)
-    
+            print(cenD) # for testing purposes
         
             if cenD[0] not in range(cenC[0]-10, cenC[0]+11) or cenD[1] not in range(cenC[1]-10, cenC[1]+11):
                 print('you need to center the camera')
@@ -101,16 +97,13 @@ while True:
                 time.sleep(secs)
         else:
             print('Contour bigger than 10000 not found')  
-            time.sleep(1)
-        
+            time.sleep(1)       
             
     cv2.imshow('frame',frame)
     if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        cap.release()
+        cv2.destroyAllWindows()     
+        serial_arduino.close()  
 
-cap.release()
-cv2.destroyAllWindows()
-        
-        
-serial_arduino.close()    
- 
+if __name__ == "__main__":
+    main_loop()
