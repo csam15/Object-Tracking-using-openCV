@@ -1,6 +1,6 @@
 🎯 Object Tracking Robot with OpenCV, Python, and Arduino. 
 
-- The goal of this project is to create an object tracking robot, with the object being a white square on a black background -
+- The goal of this project is to create an object tracking robot, with the object being a white square on a black background
 
 Features
 - Arduino and Python serial communication
